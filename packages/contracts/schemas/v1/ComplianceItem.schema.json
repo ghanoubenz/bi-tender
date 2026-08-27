@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "ComplianceStatus": {
+      "enum": [
+        "compliant",
+        "partial",
+        "gap",
+        "unknown"
+      ],
+      "title": "ComplianceStatus",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "description": "Pointer from a fact to the exact place in a source document it came from.",
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "section_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Heading trail, e.g. 'Section 7 > 7.3 Qualification'",
+          "title": "Section Path"
+        },
+        "clause": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Clause number, e.g. '7.3.2'",
+          "title": "Clause"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the parsed DocumentBlock",
+          "title": "Block Id"
+        },
+        "quote": {
+          "description": "Verbatim quote from the source supporting the fact",
+          "title": "Quote",
+          "type": "string"
+        },
+        "method": {
+          "$ref": "#/$defs/ExtractionMethod",
+          "default": "llm"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "verified": {
+          "default": false,
+          "description": "True if the quote was substring-validated against the source block",
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "quote",
+        "confidence"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "ExtractionMethod": {
+      "enum": [
+        "llm",
+        "rule",
+        "ocr_llm",
+        "human"
+      ],
+      "title": "ExtractionMethod",
+      "type": "string"
+    }
+  },
+  "description": "Layer-2 judgement for one requirement. Must reference Layer-1 facts.",
+  "properties": {
+    "requirement_id": {
+      "title": "Requirement Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ComplianceStatus"
+    },
+    "matched_capability_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Matched Capability Ids",
+      "type": "array"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "based_on_fact_ids": {
+      "description": "Layer-1 fact ids this judgement is derived from",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Based On Fact Ids",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceReference"
+      },
+      "title": "Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "requirement_id",
+    "status",
+    "rationale",
+    "based_on_fact_ids"
+  ],
+  "title": "ComplianceItem",
+  "type": "object"
+}

@@ -1,0 +1,78 @@
+{
+  "description": "A structural unit of a parsed document. Tenders are never one big string.",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "document_id": {
+      "title": "Document Id",
+      "type": "string"
+    },
+    "page": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Page"
+    },
+    "order": {
+      "title": "Order",
+      "type": "integer"
+    },
+    "block_type": {
+      "description": "paragraph | heading | table | row | cell | list_item",
+      "title": "Block Type",
+      "type": "string"
+    },
+    "section_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Section Path"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "table_data": {
+      "anyOf": [
+        {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "For table blocks: rows of cell texts",
+      "title": "Table Data"
+    }
+  },
+  "required": [
+    "id",
+    "document_id",
+    "order",
+    "block_type",
+    "text"
+  ],
+  "title": "DocumentBlockOut",
+  "type": "object"
+}

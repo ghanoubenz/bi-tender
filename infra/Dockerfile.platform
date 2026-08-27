@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+
+WORKDIR /srv
+COPY packages/contracts /srv/packages/contracts
+COPY apps/platform /srv/apps/platform
+RUN pip install --no-cache-dir -e /srv/packages/contracts -e "/srv/apps/platform[postgres]"
+
+WORKDIR /srv/apps/platform
+EXPOSE 8000
+CMD ["sh", "-c", "python manage.py migrate && python manage.py seed_dev && python manage.py runserver 0.0.0.0:8000"]

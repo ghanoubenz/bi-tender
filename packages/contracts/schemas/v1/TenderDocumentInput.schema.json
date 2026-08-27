@@ -1,0 +1,75 @@
+{
+  "description": "How a caller hands a document to the engine.\n\nExactly one of `storage_key` (shared object storage) or multipart upload\n(engine's /ingest endpoint) is used. `external_ref` is the caller's own id\n(e.g. platform TenderDocument id, or a Salesforce record id).",
+  "properties": {
+    "filename": {
+      "title": "Filename",
+      "type": "string"
+    },
+    "content_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Type"
+    },
+    "storage_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Storage Key"
+    },
+    "external_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "External Ref"
+    },
+    "tender_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Caller's tender identifier, groups documents of one tender",
+      "title": "Tender Ref"
+    },
+    "language_hint": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language Hint"
+    }
+  },
+  "required": [
+    "filename"
+  ],
+  "title": "TenderDocumentInput",
+  "type": "object"
+}

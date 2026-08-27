@@ -1,0 +1,55 @@
+{
+  "properties": {
+    "tender_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tender Ref"
+    },
+    "fit_score": {
+      "maximum": 100.0,
+      "minimum": 0.0,
+      "title": "Fit Score",
+      "type": "number"
+    },
+    "bid_readiness": {
+      "maximum": 100.0,
+      "minimum": 0.0,
+      "title": "Bid Readiness",
+      "type": "number"
+    },
+    "components": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Components",
+      "type": "object"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "based_on_fact_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Based On Fact Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "fit_score",
+    "bid_readiness",
+    "summary",
+    "based_on_fact_ids"
+  ],
+  "title": "ScoreResult",
+  "type": "object"
+}

@@ -1,0 +1,79 @@
+name: tender-intelligence
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: tender
+      POSTGRES_PASSWORD: tender-dev
+      POSTGRES_DB: platform
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tender -d platform"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: tender
+      MINIO_ROOT_PASSWORD: tender-dev-secret
+    ports: ["9000:9000", "9001:9001"]
+    volumes:
+      - miniodata:/data
+
+  ai-engine:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.ai-engine
+    environment:
+      ENGINE_DATABASE_URL: postgresql+psycopg://tender:tender-dev@postgres:5432/ai_engine
+      ENGINE_SERVICE_TOKENS: dev-service-token
+      ENGINE_GATEWAY_MODE: ${ENGINE_GATEWAY_MODE:-mock}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    ports: ["8001:8001"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  platform:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.platform
+    environment:
+      PLATFORM_DB_HOST: postgres
+      PLATFORM_DB_NAME: platform
+      PLATFORM_DB_USER: tender
+      PLATFORM_DB_PASSWORD: tender-dev
+      ENGINE_BASE_URL: http://ai-engine:8001
+      ENGINE_SERVICE_TOKEN: dev-service-token
+      PLATFORM_CORS_ORIGINS: http://localhost:3000
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-engine:
+        condition: service_started
+
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: ../../infra/Dockerfile.web
+    environment:
+      NEXT_PUBLIC_PLATFORM_API: http://localhost:8000
+    ports: ["3000:3000"]
+    depends_on: [platform]
+
+volumes:
+  pgdata:
+  miniodata:

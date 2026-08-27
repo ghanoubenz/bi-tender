@@ -1,0 +1,186 @@
+{
+  "$defs": {
+    "EvidenceReference": {
+      "description": "Pointer from a fact to the exact place in a source document it came from.",
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "section_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Heading trail, e.g. 'Section 7 > 7.3 Qualification'",
+          "title": "Section Path"
+        },
+        "clause": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Clause number, e.g. '7.3.2'",
+          "title": "Clause"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the parsed DocumentBlock",
+          "title": "Block Id"
+        },
+        "quote": {
+          "description": "Verbatim quote from the source supporting the fact",
+          "title": "Quote",
+          "type": "string"
+        },
+        "method": {
+          "$ref": "#/$defs/ExtractionMethod",
+          "default": "llm"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "verified": {
+          "default": false,
+          "description": "True if the quote was substring-validated against the source block",
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "quote",
+        "confidence"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "ExtractionMethod": {
+      "enum": [
+        "llm",
+        "rule",
+        "ocr_llm",
+        "human"
+      ],
+      "title": "ExtractionMethod",
+      "type": "string"
+    },
+    "RequirementCategory": {
+      "enum": [
+        "technical",
+        "commercial",
+        "contractual",
+        "qualification",
+        "certification",
+        "documentation",
+        "submission",
+        "schedule",
+        "other"
+      ],
+      "title": "RequirementCategory",
+      "type": "string"
+    }
+  },
+  "description": "A Layer-1 requirement fact with mandatory evidence.",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "text": {
+      "description": "Normalized requirement statement",
+      "title": "Text",
+      "type": "string"
+    },
+    "category": {
+      "$ref": "#/$defs/RequirementCategory",
+      "default": "other"
+    },
+    "mandatory": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "True=shall/must, False=should/preferred, None=unclear",
+      "title": "Mandatory"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceReference"
+      },
+      "minItems": 1,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "needs_review": {
+      "default": false,
+      "title": "Needs Review",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "text",
+    "evidence",
+    "confidence"
+  ],
+  "title": "ExtractedRequirement",
+  "type": "object"
+}
