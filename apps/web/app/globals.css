@@ -123,3 +123,49 @@ tr.clickable:hover { background: #f0f3f8; cursor: pointer; }
 .muted { color: var(--muted); }
 .error { color: var(--danger); }
 .row { display: flex; gap: 12px; align-items: center; }
+
+/* --- Phase 2: requirements + evidence viewer --- */
+
+.workspace { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 1240px) {
+  .workspace.with-evidence { grid-template-columns: minmax(0, 1fr) 420px; align-items: start; }
+}
+
+.evidence-viewer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+.evidence-viewer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.evidence-viewer-head .name {
+  font-size: 12px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+
+.evidence-panel .verified { color: var(--success); font-weight: 600; }
+.evidence-panel .unverified { color: var(--warning); font-weight: 600; }
+
+.source-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 13.5px;
+}
+.source-block.cited { border-color: var(--primary); background: #f7f9ff; }
+.source-block p { margin: 6px 0 0; }
+mark { background: #ffe9a8; padding: 0 2px; border-radius: 3px; }
+
+tr.flagged { background: #fffaf0; }
+.table-scroll { overflow-x: auto; }

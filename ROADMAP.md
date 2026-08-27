@@ -1,23 +1,24 @@
 # ROADMAP.md
 
-## Current — Phase 0/1: Foundations + Slice 1
-- [x] Architecture decided (ARCHITECTURE.md, DECISIONS.md)
-- [x] Monorepo structure, Docker dev environment
-- [x] Contracts package (Pydantic v1 contracts + JSON Schema export)
-- [x] Platform skeleton: tenants, users, tenders, documents, engine client
-- [x] AI Engine skeleton: ingest/jobs API, parsing→blocks, metadata extraction, AI gateway (mock provider in dev)
-- [x] Web skeleton: tender list/create, upload, status, metadata + evidence panel
-- [ ] Real-provider extraction quality pass on fixture tenders
-- [ ] End-to-end demo on a real ITT package
+## Current — Phase 2 complete: Requirements + Evidence Viewer
+- [x] Requirement extraction with categories, mandatory flags and evidence
+- [x] Engine `POST /api/v1/tenders/extract-requirements` + requirement listing/filters
+- [x] Platform requirement mirror with human review workflow (audited)
+- [x] Requirements table UI: category filter, needs-review queue, accept/reject
+- [x] Evidence viewer: citation → source block, quote highlighted in context
+- [ ] Scanned-PDF OCR + ZIP tender packages
+- [ ] Live-LLM extraction quality pass with eval fixtures on real tenders
 
-## Next — Phase 2: Requirements + Evidence Viewer
-- Requirement extraction (categories, mandatory flags, evidence)
-- Document viewer with block/evidence highlighting
-- Needs-review queue
-- Parsing hardening: scanned PDFs (OCR), ZIP packages, large docs
+## Next — Phase 3: Company Intelligence (minimal) + Compliance Matrix
+- CompanyProfile / Capability / Certification / ProjectReference CRUD
+- Match engine: requirements x capabilities -> ComplianceResult
+- Compliance matrix UI with gap highlighting and evidence on both sides
 
 ## Later
-- Phase 3: Company Intelligence (minimal) + Compliance Matrix
-- Phase 4: Risk, Fit Score, Bid/No-Bid decision workflow
+- Phase 4: Risk, Fit Score, AI assessment, Bid/No-Bid intelligence
 - Phase 5: RAG assistant, quotas & cost dashboards, onboarding, deploy runbook
-- Then: email/API ingestion integration → CRM/ERP connectors → SSO → local models
+- Then: email/API ingestion integration -> CRM/ERP connectors -> SSO -> local models
+
+## Completed
+- Phase 0: architecture, contracts, dev environment, CI
+- Phase 1: tender -> upload -> parse -> evidence-backed metadata -> UI

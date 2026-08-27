@@ -75,6 +75,7 @@ export interface Tender {
   decision: string;
   decision_reason: string;
   ai_metadata: TenderMetadata | null;
+  requirements_status: "pending" | "processing" | "ready" | "failed";
   documents: TenderDocument[];
   created_at: string;
 }
@@ -89,3 +90,29 @@ export interface DocumentBlock {
   text: string;
   table_data: string[][] | null;
 }
+
+export interface Requirement {
+  id: string;
+  engine_requirement_id: string;
+  text: string;
+  category: string;
+  mandatory: boolean | null;
+  evidence: EvidenceReference[];
+  confidence: number;
+  needs_review: boolean;
+  review_status: "pending" | "accepted" | "rejected";
+  reviewed_at: string | null;
+  note: string;
+}
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  technical: "Technical",
+  commercial: "Commercial",
+  contractual: "Contractual",
+  qualification: "Qualification",
+  certification: "Certification",
+  documentation: "Documentation",
+  submission: "Submission",
+  schedule: "Schedule",
+  other: "Other",
+};

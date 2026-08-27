@@ -59,3 +59,20 @@ proprietary-friendly licensing, batteries (auth, ORM, migrations, admin,
 audit via simple-history), Postgres maturity, 5–10-year maintainability,
 developer availability, and staying in Python next to the AI ecosystem.
 We accept writing our own UI (we wanted that anyway) and running Celery.
+
+## ADR-012 · 2026-08-27 — Requirement extraction is evidence-gated at both layers
+Rule and LLM backends share one contract path: a requirement is emitted only
+with at least one EvidenceReference whose quote is substring-validated against
+the cited DocumentBlock. The LLM backend additionally discards any requirement
+citing a block id that does not exist — a hallucinated citation removes the
+requirement rather than downgrading it. Unverified quotes cap confidence at 0.4
+and set needs_review. Table rows are split per row with the leading ref cell
+mapped to `clause`, because tender requirement matrices live in tables.
+
+## ADR-011 · 2026-08-27 — Platform mirrors engine requirements; engine stays system of record
+The engine owns the extracted *fact* and its evidence; the platform stores a
+mirror row carrying only *workflow state* (review status, reviewer, note) and,
+from Phase 3, compliance. Re-extraction replaces facts but preserves human
+review state by matching on requirement text. Rationale: the boundary stays
+clean (contracts + HTTP only, engine independently usable), while bid teams
+keep their work across re-ingestion of amended tender packages.

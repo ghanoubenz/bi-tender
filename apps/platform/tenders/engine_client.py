@@ -58,3 +58,22 @@ class EngineClient:
         )
         resp.raise_for_status()
         return resp.json()
+
+    def extract_requirements(self, *, tenant_id: str, tender_ref: str) -> JobStatus:
+        resp = httpx.post(
+            f"{self.base_url}/api/v1/tenders/extract-requirements",
+            headers=self._headers(tenant_id),
+            json={"tender_ref": tender_ref, "idempotency_key": None},
+            timeout=120,
+        )
+        resp.raise_for_status()
+        return JobStatus.model_validate(resp.json())
+
+    def list_requirements(self, *, tenant_id: str, tender_ref: str) -> list[dict]:
+        resp = httpx.get(
+            f"{self.base_url}/api/v1/tenders/{tender_ref}/requirements",
+            headers=self._headers(tenant_id),
+            timeout=60,
+        )
+        resp.raise_for_status()
+        return resp.json()

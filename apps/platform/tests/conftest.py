@@ -28,3 +28,9 @@ def api(user):
     client = APIClient()
     client.force_authenticate(user)
     return client
+
+
+@pytest.fixture(autouse=True)
+def isolated_media(tmp_path, settings):
+    """Uploads in tests go to a temp dir, never the working tree."""
+    settings.MEDIA_ROOT = tmp_path / "media"

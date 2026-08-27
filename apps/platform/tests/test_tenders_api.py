@@ -59,6 +59,8 @@ def test_refresh_syncs_metadata(MockClient, api):
     MockClient.return_value.get_job.return_value = make_job(
         "succeeded", result={"document_id": "eng-doc-1", "metadata": metadata}
     )
+    # Ingestion completing also kicks off requirement extraction (Phase 2).
+    MockClient.return_value.extract_requirements.return_value = make_job("queued")
     resp = api.post(f"/api/tenders/{tender_id}/refresh/")
     body = resp.json()
     assert body["ai_metadata"]["client"]["value"] == "Ministry of Water"

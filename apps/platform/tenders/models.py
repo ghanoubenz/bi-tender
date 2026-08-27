@@ -41,6 +41,9 @@ class Tender(TenantOwnedModel):
     decided_at = models.DateTimeField(null=True, blank=True)
     # Engine-extracted TenderMetadata contract payload (evidence included).
     ai_metadata = models.JSONField(null=True, blank=True)
+    # Requirement extraction job tracking (engine-side job id).
+    requirements_job_id = models.CharField(max_length=64, blank=True)
+    requirements_status = models.CharField(max_length=16, default="pending")
     created_by = models.ForeignKey(
         "core.User", null=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -65,7 +68,9 @@ class TenderDocument(TenantOwnedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tender = models.ForeignKey(Tender, on_delete=models.CASCADE, related_name="documents")
-    file = models.FileField(upload_to=document_upload_path)
+    # Tenant-prefixed keys are long (two UUIDs + filename); the FileField
+    # default of max_length=100 truncates and breaks uploads.
+    file = models.FileField(upload_to=document_upload_path, max_length=1024)
     filename = models.CharField(max_length=512)
     content_type = models.CharField(max_length=128, blank=True)
     size = models.BigIntegerField(default=0)
@@ -84,3 +89,47 @@ class TenderDocument(TenantOwnedModel):
 
     class Meta:
         ordering = ["created_at"]
+
+
+class Requirement(TenantOwnedModel):
+    """Platform mirror of an engine-extracted requirement.
+
+    The AI Engine remains the system of record for the extracted *fact* and its
+    evidence; the platform owns the *workflow state* laid on top (review,
+    ownership, notes) and, from Phase 3, compliance against capabilities.
+    """
+
+    class ReviewStatus(models.TextChoices):
+        PENDING = "pending"
+        ACCEPTED = "accepted"
+        REJECTED = "rejected"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tender = models.ForeignKey(Tender, on_delete=models.CASCADE, related_name="requirements")
+    engine_requirement_id = models.CharField(max_length=64, db_index=True)
+    text = models.TextField()
+    category = models.CharField(max_length=32)
+    mandatory = models.BooleanField(null=True)
+    # ExtractedRequirement.evidence contract payload — never rewritten by the platform.
+    evidence = models.JSONField(default=list)
+    confidence = models.FloatField(default=0.0)
+    needs_review = models.BooleanField(default=False)
+    review_status = models.CharField(
+        max_length=16, choices=ReviewStatus.choices, default=ReviewStatus.PENDING
+    )
+    reviewed_by = models.ForeignKey(
+        "core.User", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    note = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    history = HistoricalRecords()
+
+    class Meta:
+        ordering = ["category", "created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["tender", "engine_requirement_id"], name="unique_requirement_per_tender"
+            )
+        ]

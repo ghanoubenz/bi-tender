@@ -90,3 +90,31 @@ def make_xlsx() -> bytes:
     buf = io.BytesIO()
     wb.save(buf)
     return buf.getvalue()
+
+
+def make_requirements_docx() -> bytes:
+    """A DOCX carrying real obligations, including a requirements table."""
+    import io
+
+    from docx import Document
+
+    doc = Document()
+    doc.add_heading("Section 7 Qualification Requirements", level=1)
+    doc.add_paragraph(
+        "7.3.2 The Bidder shall have completed 3 similar projects in the last 5 years."
+    )
+    doc.add_paragraph(
+        "The Contractor must hold a valid ISO 9001 certification at the time of submission."
+    )
+    doc.add_paragraph("Mobilization shall be completed within 21 calendar days of contract award.")
+    doc.add_paragraph("The region has a hot arid climate with seasonal sandstorms.")
+    table = doc.add_table(rows=3, cols=2)
+    table.rows[0].cells[0].text = "Ref"
+    table.rows[0].cells[1].text = "Requirement"
+    table.rows[1].cells[0].text = "1"
+    table.rows[1].cells[1].text = "The bidder shall provide a valid trade licence copy with the bid."
+    table.rows[2].cells[0].text = "2"
+    table.rows[2].cells[1].text = "Bidders should provide a cost breakdown for all unit rates."
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()

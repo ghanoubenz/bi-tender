@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tenders.models import Tender, TenderDocument
+from tenders.models import Requirement, Tender, TenderDocument
 
 
 class TenderDocumentSerializer(serializers.ModelSerializer):
@@ -36,6 +36,7 @@ class TenderSerializer(serializers.ModelSerializer):
             "decision_reason",
             "decided_at",
             "ai_metadata",
+            "requirements_status",
             "documents",
             "created_at",
             "updated_at",
@@ -43,6 +44,7 @@ class TenderSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "status",
+            "requirements_status",
             "decision",
             "decision_reason",
             "decided_at",
@@ -56,3 +58,29 @@ class TenderSerializer(serializers.ModelSerializer):
 class DecisionSerializer(serializers.Serializer):
     decision = serializers.ChoiceField(choices=Tender.Decision.choices)
     reason = serializers.CharField(allow_blank=False)
+
+
+class RequirementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requirement
+        fields = [
+            "id",
+            "engine_requirement_id",
+            "text",
+            "category",
+            "mandatory",
+            "evidence",
+            "confidence",
+            "needs_review",
+            "review_status",
+            "reviewed_at",
+            "note",
+        ]
+        read_only_fields = fields
+
+
+class RequirementReviewSerializer(serializers.Serializer):
+    review_status = serializers.ChoiceField(
+        choices=[Requirement.ReviewStatus.ACCEPTED, Requirement.ReviewStatus.REJECTED]
+    )
+    note = serializers.CharField(allow_blank=True, required=False)

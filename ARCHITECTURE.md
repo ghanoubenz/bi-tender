@@ -305,7 +305,7 @@ Frontend: Next.js scaffold, design tokens, API client.
 Tests: contract round-trip tests, health checks, CI-runnable `make test`.
 DoD: `docker compose up` gives login-less dev environment with all services healthy; contracts importable from both services.
 
-**Phase 1 — Slice 1: Tender → Upload → Ingest → Metadata**
+**Phase 1 — Slice 1: Tender → Upload → Ingest → Metadata** ✅ delivered
 Objective: the first vertical slice works end-to-end.
 Backend: Tender/TenderDocument models + API, S3 upload, engine client, ingestion trigger + status.
 AI: identification, parsing to blocks, metadata extraction with evidence, jobs.
@@ -313,7 +313,7 @@ Frontend: tender list/create, upload, processing status, metadata panel with evi
 Tests: parse fixture PDFs (born-digital + scanned + DOCX + XLSX), evidence validation, API tests.
 DoD: upload a real ITT PDF → see extracted client/deadline/scope with clickable evidence.
 
-**Phase 2 — Slice 2: Requirements + Evidence viewer**
+**Phase 2 — Slice 2: Requirements + Evidence viewer** ✅ delivered
 Requirements extraction with categories and evidence; document viewer with block highlighting; requirements table UI; needs-review queue.
 DoD: 300-page tender yields categorized requirement list, every row opens its source.
 
