@@ -2,90 +2,87 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import type { ComponentType, SVGProps } from 'react'
+import {
+  IconBadge, IconBuilding, IconChart, IconCheckList, IconDoc, IconGrid,
+  IconInbox, IconSparkle, IconTemplate, IconUsers,
+} from './icons'
 
-/**
- * The full product vision is visible from day one. Sections that are not built
- * yet are shown but muted — never hidden, never a broken link. Investors and
- * users can both see where the product is going.
- */
-type NavItem = { href: string; label: string; soon?: boolean }
+type Icon = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>
+type NavItem = { href: string; label: string; icon: Icon; soon?: boolean }
 type NavGroup = { section: string | null; items: NavItem[] }
 
 const NAV: NavGroup[] = [
-  {
-    section: null,
-    items: [{ href: '/', label: 'Dashboard' }],
-  },
+  { section: null, items: [{ href: '/', label: 'Dashboard', icon: IconGrid }] },
   {
     section: 'Tenders',
     items: [
-      { href: '/tenders', label: 'All tenders' },
-      { href: '/tenders?mine=1', label: 'My tenders' },
-      { href: '/feed', label: 'Tender feed', soon: true },
+      { href: '/tenders', label: 'All tenders', icon: IconDoc },
+      { href: '/feed', label: 'Tender feed', icon: IconInbox, soon: true },
     ],
   },
   {
     section: 'Company',
     items: [
-      { href: '/companies', label: 'Companies' },
-      { href: '/contacts', label: 'Contacts' },
-      { href: '/capabilities', label: 'Capabilities' },
+      { href: '/companies', label: 'Companies', icon: IconBuilding },
+      { href: '/contacts', label: 'Contacts', icon: IconUsers },
+      { href: '/capabilities', label: 'Capabilities', icon: IconBadge },
     ],
   },
   {
     section: 'AI',
     items: [
-      { href: '/assistant', label: 'Tender assistant', soon: true },
-      { href: '/ai-jobs', label: 'Analysis jobs', soon: true },
+      { href: '/assistant', label: 'Tender assistant', icon: IconSparkle, soon: true },
+      { href: '/ai-jobs', label: 'Analysis jobs', icon: IconChart, soon: true },
     ],
   },
   {
     section: 'Manage',
     items: [
-      { href: '/tasks', label: 'Tasks' },
-      { href: '/templates', label: 'Checklist templates' },
-      { href: '/analytics', label: 'Analytics', soon: true },
+      { href: '/tasks', label: 'Tasks', icon: IconCheckList },
+      { href: '/templates', label: 'Templates', icon: IconTemplate },
     ],
   },
 ]
 
-export function Sidebar({ tenantName }: { tenantName: string }) {
+export function Sidebar({ tenantName, userName }: { tenantName: string; userName: string }) {
   const pathname = usePathname()
 
   return (
-    <aside className="flex w-[228px] shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)]">
-      <div className="flex h-[52px] items-center gap-2 border-b border-[var(--color-border)] px-4">
-        <div className="flex h-6 w-6 items-center justify-center rounded-[6px] bg-[var(--color-accent)] text-[12px] font-bold text-white">
+    <aside className="flex w-[236px] shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-chrome)]">
+      <div className="flex h-[60px] items-center gap-2.5 px-4">
+        <div className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-[13px] font-bold text-white">
           T
         </div>
         <div className="min-w-0">
-          <div className="truncate text-[13px] font-semibold leading-tight">TenderIQ</div>
-          <div className="truncate text-[11px] leading-tight text-[var(--color-ink-faint)]">
-            {tenantName}
-          </div>
+          <div className="truncate text-[13.5px] font-semibold leading-tight tracking-[-0.01em]">TenderIQ</div>
+          <div className="truncate text-[11.5px] leading-tight text-[var(--color-ink-faint)]">{tenantName}</div>
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3">
+      <nav className="flex-1 overflow-y-auto px-2.5 pb-3">
         {NAV.map((group, i) => (
           <div key={i} className={i > 0 ? 'mt-5' : ''}>
             {group.section && (
-              <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">
+              <div className="px-2 pb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-[var(--color-ink-faint)]">
                 {group.section}
               </div>
             )}
             {group.items.map((item) => {
+              const Icon = item.icon
               const active =
-                item.href === '/' ? pathname === '/' : pathname.startsWith(item.href.split('?')[0])
+                item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+
               if (item.soon) {
                 return (
                   <div
                     key={item.href}
-                    className="flex cursor-default items-center justify-between rounded-[6px] px-2 py-[6px] text-[13px] text-[var(--color-ink-faint)]"
                     title="Planned — not built yet"
+                    className="flex cursor-default items-center gap-2.5 rounded-[8px] px-2 py-[7px] text-[13px] text-[var(--color-ink-faint)]"
                   >
-                    {item.label}
-                    <span className="text-[10px] uppercase tracking-wide">soon</span>
+                    <Icon size={16} className="shrink-0 opacity-60" />
+                    <span className="flex-1">{item.label}</span>
+                    <span className="text-[9.5px] font-semibold uppercase tracking-[0.06em]">soon</span>
                   </div>
                 )
               }
@@ -93,12 +90,14 @@ export function Sidebar({ tenantName }: { tenantName: string }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`block rounded-[6px] px-2 py-[6px] text-[13px] transition-colors ${
+                  aria-current={active ? 'page' : undefined}
+                  className={`transition-ui flex items-center gap-2.5 rounded-[8px] px-2 py-[7px] text-[13px] ${
                     active
-                      ? 'bg-[var(--color-accent-soft)] font-medium text-[var(--color-accent)]'
-                      : 'text-[var(--color-ink-soft)] hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)]'
+                      ? 'bg-[var(--color-surface)] font-medium text-[var(--color-accent)] shadow-[var(--shadow-card)]'
+                      : 'text-[var(--color-ink-soft)] hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)]'
                   }`}
                 >
+                  <Icon size={16} className="shrink-0" />
                   {item.label}
                 </Link>
               )
@@ -106,6 +105,19 @@ export function Sidebar({ tenantName }: { tenantName: string }) {
           </div>
         ))}
       </nav>
+
+      <div className="flex items-center gap-2.5 border-t border-[var(--color-border)] px-4 py-3">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent-soft)] text-[11.5px] font-semibold text-[var(--color-accent-ink)]">
+          {initials(userName)}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-[12.5px] font-medium leading-tight">{userName}</div>
+        </div>
+      </div>
     </aside>
   )
+}
+
+function initials(name: string) {
+  return name.split(' ').filter(Boolean).slice(0, 2).map((n) => n[0]?.toUpperCase()).join('')
 }

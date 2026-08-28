@@ -32,7 +32,7 @@ export function Card({
 }) {
   return (
     <section
-      className={`rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] ${className}`}
+      className={`rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ${className}`}
     >
       {children}
     </section>

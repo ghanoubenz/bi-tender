@@ -76,3 +76,30 @@ from Phase 3, compliance. Re-extraction replaces facts but preserves human
 review state by matching on requirement text. Rationale: the boundary stays
 clean (contracts + HTTP only, engine independently usable), while bid teams
 keep their work across re-ingestion of amended tender packages.
+
+## ADR-013 · 2026-08-28 — Design system: Operate mode, measured not eyeballed
+Design skills (taste-skill, emilkowalski/skills, ui-ux-pro-max, impeccable)
+installed OUTSIDE the repo at ~/design-skills so they inform the work without
+becoming a dependency. taste-skill self-excludes dashboards; impeccable's
+"Operate" mode governs: familiarity is a feature, the tool disappears into the
+task, restrained colour where the accent marks actions/selection/state only,
+one type family, real component states, motion 150-250ms conveying state only.
+
+Applied and verified:
+- Contrast computed, not judged: every ink and status colour now passes 4.5:1
+  on both surface and canvas (ink-faint was 3.0:1 and failed; now 4.97:1).
+- Browser surfaces themed from the palette: selection, focus rings, scrollbars,
+  tabular numerals — the parts we did not draw still carry the design.
+- Real drawn SVG icon set (16px grid, 1.5 stroke) — never emoji as icons.
+- Shadows carry offset AND blur, never a zero-offset halo.
+
+Charts follow the dataviz procedure: pipeline by stage is ONE series, so one
+hue, no legend, ordered by pipeline stage and never re-sorted by size, with
+direct value labels instead of an axis. Win rate is deliberately NOT a chart —
+with a handful of decided tenders a donut would dramatise noise, so it ships
+as a stat tile. No categorical palette exists to validate; status colours stay
+reserved and always ship with a text label, never colour alone.
+
+Honesty over decoration: a readiness bar is only drawn when requirements have
+actually been assessed. An empty track reads as a broken progress bar and
+implies zero readiness, which is a different claim from "nobody has checked".

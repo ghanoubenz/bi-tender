@@ -1,38 +1,49 @@
 @import 'tailwindcss';
 
 /**
- * Design tokens — the whole visual system lives here.
+ * Design tokens — the whole visual system.
  *
- * Deliberately restrained: a neutral slate ground, one accent, and semantic
- * status colours. 1px borders instead of shadows. High information density.
- * No gradients, no glassmorphism. The test for every screen is whether it
- * would look at home in a Linear screenshot.
+ * Mode: Operate (the user is in a task). Familiarity is a feature; the tool
+ * should disappear into the work. Restrained colour: the accent marks primary
+ * actions, current selection and state — never decoration. One type family,
+ * fixed rem scale, tight ratio. Status colours are reserved and always ship
+ * with a text label, never colour alone.
  */
 @theme {
-  --color-canvas: #f7f8fa;
+  /* Surfaces — content layer, and a cooler second layer for chrome */
+  --color-canvas: #f6f7f9;
   --color-surface: #ffffff;
-  --color-raised: #fbfcfd;
-  --color-border: #e4e7ec;
-  --color-border-strong: #d2d7de;
+  --color-raised: #fafbfc;
+  --color-chrome: #fbfcfd;
+  --color-border: #e5e8ec;
+  --color-border-strong: #cfd5dd;
 
-  --color-ink: #12161f;
-  --color-ink-soft: #4a5464;
-  --color-ink-faint: #8b929f;
+  /* Ink — all pass 4.5:1 on surface and canvas */
+  --color-ink: #101521;
+  --color-ink-soft: #49536b;
+  --color-ink-faint: #667085;
 
-  --color-accent: #2f5fe0;
-  --color-accent-hover: #2450c9;
+  /* Accent — actions, selection, state. Not decoration. */
+  --color-accent: #2a55d4;
+  --color-accent-hover: #2247b8;
   --color-accent-soft: #eef2fe;
+  --color-accent-ink: #1b3a94;
 
-  --color-positive: #0f7a4a;
-  --color-positive-soft: #e6f5ed;
-  --color-caution: #a86a09;
-  --color-caution-soft: #fdf3e2;
-  --color-critical: #b42318;
-  --color-critical-soft: #fdeceb;
+  /* Status — reserved; never reused as a series colour */
+  --color-positive: #0d6c42;
+  --color-positive-soft: #e4f4ec;
+  --color-caution: #96600a;
+  --color-caution-soft: #fdf2e0;
+  --color-critical: #a92e22;
+  --color-critical-soft: #fdeae8;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --radius-card: 10px;
+  --radius-card: 12px;
+
+  /* Depth: real offset + soft blur, never a zero-offset halo */
+  --shadow-card: 0 1px 2px rgb(16 21 33 / 0.04), 0 4px 12px rgb(16 21 33 / 0.04);
+  --shadow-raised: 0 2px 4px rgb(16 21 33 / 0.06), 0 12px 28px rgb(16 21 33 / 0.08);
 }
 
 html, body { height: 100%; }
@@ -44,7 +55,36 @@ body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Tabular figures everywhere numbers are compared down a column. */
-.tnum { font-variant-numeric: tabular-nums; }
+/* --- Browser surfaces we did not draw, themed from the palette ----------- */
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-ink);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+* { scrollbar-width: thin; scrollbar-color: var(--color-border-strong) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 999px;
+  border: 3px solid var(--color-canvas);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-faint); }
+
+/* Numbers that are compared down a column align on their digits. */
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+
+/* Motion conveys state, and only state. 150–250ms. */
+@media (prefers-reduced-motion: no-preference) {
+  .transition-ui { transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out, box-shadow 160ms ease-out; }
+}
