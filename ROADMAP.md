@@ -27,6 +27,27 @@ The product is built toward one end-user journey, in the founder's words
   blocks → metadata + requirement extraction with verified citations;
   AI gateway with task routing and per-tenant metering
 
+## ⏰ HARD DEADLINE: investor-demo-ready by SEPTEMBER 15, 2026
+(Investor event in October. Set 2026-08-28 — 18 days.) Everything below is
+sequenced against this date. Demo story: "A tender arrives by email; before
+anyone opens it, TenderIQ has read all 200 pages — any language — scored it
+against what the company actually has, and prepared the checklist; a human
+reviews the evidence and decides. One day instead of two weeks."
+
+Demo countdown (days from 2026-08-28):
+- D1–4   M1 Connect the engine + translation step + OCR fixture
+- D5–7   Tender Feed + inbound-email ingestion (approved senders only)
+- D8–9   Checklist generation (engine → editable → save as template)
+- D10–11 Ask-the-tender chat, text, with clause citations
+- D12–13 Deploy (Vercel+Neon+Railway) · pricing-visibility roles · C-level view
+- D14–16 Demo hardening: real oil&gas fixture package, rehearsed script
+- D17–18 Buffer
+OUT until after Sept 15 (shown as designed placeholders + roadmap): proposal
+generation, pricing Excel import, voice assistant, Outlook deep integration,
+portal APIs, CRM sync, contract library, Arabic UI.
+Founder to provide: Anthropic API key (live extraction), a real tender
+package as demo fixture, hosting accounts (~D12).
+
 ## Milestone 1 — Connect the brain  ← CURRENT
 Upload a tender package in the platform and watch it analyse itself.
 - Platform → engine client (HTTP + contracts only, unchanged boundary)
