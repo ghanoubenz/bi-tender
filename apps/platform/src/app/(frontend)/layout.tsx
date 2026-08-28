@@ -1,19 +1,18 @@
-import React from 'react'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import './styles.css'
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
+
+export const metadata: Metadata = {
+  title: 'TenderIQ — Tender Intelligence',
+  description: 'AI Tender Intelligence & Bid Management',
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
-
+export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
-      </body>
+    <html lang="en" className={inter.variable}>
+      <body>{children}</body>
     </html>
   )
 }
