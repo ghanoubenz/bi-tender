@@ -71,3 +71,16 @@ export const IconArrowRight = (p: IconProps) => (
 export const IconPlus = (p: IconProps) => (
   <Svg {...p}><path d="M8 3.25v9.5M3.25 8h9.5" /></Svg>
 )
+
+export const IconBriefcase = (p: IconProps) => (
+  <Svg {...p}><rect x="1.75" y="4.75" width="12.5" height="9" rx="1.5" /><path d="M5.5 4.75V3.5A1.25 1.25 0 0 1 6.75 2.25h2.5A1.25 1.25 0 0 1 10.5 3.5v1.25M1.75 8.5h12.5" /></Svg>
+)
+export const IconSend = (p: IconProps) => (
+  <Svg {...p}><path d="M14.25 1.75 7.5 8.5M14.25 1.75l-4.5 12.5-2.25-5.75L1.75 6.25Z" /></Svg>
+)
+export const IconTrophy = (p: IconProps) => (
+  <Svg {...p}><path d="M4.5 2.25h7v3.5a3.5 3.5 0 1 1-7 0Z" /><path d="M4.5 3.5H2.75v1a2 2 0 0 0 2 2M11.5 3.5h1.75v1a2 2 0 0 1-2 2M6.25 13.75h3.5M8 9.25v4.5" /></Svg>
+)
+export const IconPercent = (p: IconProps) => (
+  <Svg {...p}><path d="m3.25 12.75 9.5-9.5" /><circle cx="4.75" cy="4.75" r="1.75" /><circle cx="11.25" cy="11.25" r="1.75" /></Svg>
+)

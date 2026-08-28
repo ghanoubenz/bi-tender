@@ -14,10 +14,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     tenantName = tenant?.name ?? tenantName
   }
 
+  /**
+   * The application sits in a rounded window floating on a tinted page. It
+   * frames the product as a single object rather than a browser page, and
+   * gives the chrome (sidebar, header) a surface to sit against.
+   */
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar tenantName={tenantName} userName={user.fullName ?? user.email} />
-      <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+    <div className="h-screen overflow-hidden p-3">
+      <div className="flex h-full overflow-hidden rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-window)]">
+        <Sidebar tenantName={tenantName} userName={user.fullName ?? user.email} />
+        <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+      </div>
     </div>
   )
 }

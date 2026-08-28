@@ -96,3 +96,78 @@ export function ComingSoon({ feature, phase }: { feature: string; phase: string 
     </Card>
   )
 }
+
+/**
+ * Stat card in the reference language: an icon badge anchors the card, the
+ * number leads, and a context line sits underneath. The `filled` variant is
+ * the one committed surface in a row — used once, never repeated.
+ */
+export function StatCard({
+  label,
+  value,
+  context,
+  icon: Icon,
+  href,
+  filled,
+  accentIcon,
+}: {
+  label: string
+  value: string | number
+  context?: string
+  icon: React.ComponentType<{ size?: number; className?: string }>
+  href: string
+  filled?: boolean
+  accentIcon?: 'accent' | 'positive' | 'dark'
+}) {
+  const badge =
+    filled
+      ? 'bg-white/20 text-white'
+      : accentIcon === 'positive'
+        ? 'bg-[var(--color-positive-soft)] text-[var(--color-positive)]'
+        : accentIcon === 'dark'
+          ? 'bg-[var(--color-ink)] text-white'
+          : 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
+
+  return (
+    <Link
+      href={href}
+      className={`transition-ui group flex flex-col rounded-[14px] border p-4 ${
+        filled
+          ? 'border-transparent bg-[var(--color-accent)] text-white shadow-[var(--shadow-card)] hover:bg-[var(--color-accent-hover)]'
+          : 'border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-raised)]'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <span className={`text-[12.5px] ${filled ? 'text-white/80' : 'text-[var(--color-ink-soft)]'}`}>
+          {label}
+        </span>
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${badge}`}>
+          <Icon size={15} />
+        </span>
+      </div>
+      <div className="tnum mt-2.5 text-[28px] font-semibold leading-none tracking-[-0.02em]">{value}</div>
+      {context && (
+        <div className={`mt-2 text-[12px] ${filled ? 'text-white/75' : 'text-[var(--color-ink-faint)]'}`}>
+          {context}
+        </div>
+      )}
+    </Link>
+  )
+}
+
+/** Status dot + label. Colour never carries meaning alone. */
+export function StatusDot({ tone, children }: { tone: Tone; children: ReactNode }) {
+  const colour = {
+    neutral: 'var(--color-ink-faint)',
+    accent: 'var(--color-accent)',
+    positive: 'var(--color-positive)',
+    caution: 'var(--color-caution)',
+    critical: 'var(--color-critical)',
+  }[tone]
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[12.5px] whitespace-nowrap">
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: colour }} />
+      {children}
+    </span>
+  )
+}

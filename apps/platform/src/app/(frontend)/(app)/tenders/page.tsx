@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { Where } from 'payload'
 import { Topbar } from '@/components/Topbar'
-import { Badge, Card, EmptyState } from '@/components/ui'
+import { Badge, Card, EmptyState, StatusDot } from '@/components/ui'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 import { STAGE_LABELS, formatDeadline, formatMoney } from '@/lib/format'
 
@@ -83,9 +83,9 @@ export default async function TendersPage() {
                         {client ?? '—'}
                       </td>
                       <td className="px-4 py-2.5">
-                        <Badge tone={STAGE_TONE[t.stage as string] ?? 'neutral'}>
+                        <StatusDot tone={STAGE_TONE[t.stage as string] ?? 'neutral'}>
                           {STAGE_LABELS[t.stage as string] ?? t.stage}
-                        </Badge>
+                        </StatusDot>
                       </td>
                       <td className="tnum px-4 py-2.5 text-right text-[13px] text-[var(--color-ink-soft)]">
                         {formatMoney(t.estimatedValue)}

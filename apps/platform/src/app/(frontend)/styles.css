@@ -11,6 +11,7 @@
  */
 @theme {
   /* Surfaces — content layer, and a cooler second layer for chrome */
+  --color-page: #eceef3;
   --color-canvas: #f6f7f9;
   --color-surface: #ffffff;
   --color-raised: #fafbfc;
@@ -44,12 +45,13 @@
   /* Depth: real offset + soft blur, never a zero-offset halo */
   --shadow-card: 0 1px 2px rgb(16 21 33 / 0.04), 0 4px 12px rgb(16 21 33 / 0.04);
   --shadow-raised: 0 2px 4px rgb(16 21 33 / 0.06), 0 12px 28px rgb(16 21 33 / 0.08);
+  --shadow-window: 0 1px 3px rgb(16 21 33 / 0.06), 0 16px 48px rgb(16 21 33 / 0.10);
 }
 
 html, body { height: 100%; }
 
 body {
-  background: var(--color-canvas);
+  background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 14px;

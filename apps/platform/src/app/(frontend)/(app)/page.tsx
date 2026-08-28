@@ -2,9 +2,12 @@ import Link from 'next/link'
 import type { Where } from 'payload'
 import { Sidebar } from '@/components/Sidebar'
 import { Topbar } from '@/components/Topbar'
-import { Badge, Card, CardHeader, EmptyState } from '@/components/ui'
+import { Badge, Card, CardHeader, EmptyState, StatCard } from '@/components/ui'
 import { PipelineChart } from '@/components/PipelineChart'
-import { IconAlert, IconArrowRight, IconClock, IconPlus } from '@/components/icons'
+import {
+  IconAlert, IconArrowRight, IconBriefcase, IconClock, IconPercent, IconPlus,
+  IconSend, IconTrophy,
+} from '@/components/icons'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 import { readinessOf } from '@/lib/readiness'
 import { STAGE_LABELS, daysUntil, formatDate, formatDeadline, formatMoney } from '@/lib/format'
@@ -163,13 +166,35 @@ export default async function DashboardPage() {
 
         {/* Headline numbers */}
         <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <Stat label="Working on now" value={working.length} sub={formatMoney(sum(working))} href="/tenders" />
-          <Stat label="Sent in, waiting" value={submitted.length} sub={formatMoney(sum(submitted))} href="/tenders" />
-          <Stat label="Won" value={won.length} sub={formatMoney(sum(won))} href="/tenders" positive />
-          <Stat
+          <StatCard
+            label="Working on now"
+            value={working.length}
+            context={`${formatMoney(sum(working))} in play`}
+            icon={IconBriefcase}
+            href="/tenders"
+            filled
+          />
+          <StatCard
+            label="Sent in, waiting"
+            value={submitted.length}
+            context={`${formatMoney(sum(submitted))} awaiting result`}
+            icon={IconSend}
+            href="/tenders"
+            accentIcon="dark"
+          />
+          <StatCard
+            label="Won"
+            value={won.length}
+            context={`${formatMoney(sum(won))} secured`}
+            icon={IconTrophy}
+            href="/tenders"
+            accentIcon="positive"
+          />
+          <StatCard
             label="Win rate"
             value={winRate === null ? '—' : `${winRate}%`}
-            sub={decided ? `${won.length} of ${decided} decided` : 'No results yet'}
+            context={decided ? `${won.length} won of ${decided} decided` : 'No results yet'}
+            icon={IconPercent}
             href="/tenders"
           />
         </div>
@@ -263,25 +288,6 @@ export default async function DashboardPage() {
         </div>
       </div>
     </>
-  )
-}
-
-function Stat({
-  label, value, sub, href, positive,
-}: {
-  label: string; value: string | number; sub?: string; href: string; positive?: boolean
-}) {
-  return (
-    <Link
-      href={href}
-      className="transition-ui rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-raised)]"
-    >
-      <div className="text-[12px] text-[var(--color-ink-soft)]">{label}</div>
-      <div className={`tnum mt-1.5 text-[27px] font-semibold leading-none tracking-[-0.02em] ${positive ? 'text-[var(--color-positive)]' : ''}`}>
-        {value}
-      </div>
-      {sub && <div className="mt-1.5 text-[12px] text-[var(--color-ink-faint)]">{sub}</div>}
-    </Link>
   )
 }
 
