@@ -340,3 +340,38 @@ We already lost-risked work in an ephemeral container. Therefore:
 - Commit at stable milestones; push always; run the actual app before
   reporting; every feature report includes a "Verify:" block with exact URL,
   steps, and expected result.
+
+---
+
+## 18. The End-User Journey (North Star — added after founder session)
+
+This section records the founder's description of how the product must work
+for the end user. Every milestone in ROADMAP.md serves this journey.
+
+1. **Tenders arrive by themselves.** The user's email and tender portals
+   (e.g. SAP Ariba) are connected; incoming tenders land in one place.
+2. **The system has already done the job** before anyone opens them: parsed
+   the documents, compared them against the company's data (capabilities,
+   certifications, tools/equipment, past projects).
+3. **Fit score per tender** — "70%, you can apply". Honesty rule: a score
+   component with no underlying data (e.g. tool availability unknown) is
+   hidden entirely, never shown as a fake number or colour.
+4. **Open a tender → AI summary**: what it is, what the client wants.
+5. **Generate checklist** → legal, commercial, technical items, plus
+   clarification questions for the client. Answers to clarifications are
+   recorded as facts and the AI re-uses them in its analysis.
+6. **Pricing** must exist before proposal generation: either the stored
+   pricing list, or an Excel import the system reads and structures.
+7. **Company profile** (per tenant, kept in settings, not in the user's
+   face): brand guidelines, standard documents (HSE, company profile,
+   marketing materials), certifications to always include.
+8. **Generate proposal**: the system first says what is missing, then
+   produces Word + PDF and an organized ZIP of all documents; editable in
+   the platform or in Word.
+9. **The human decides** bid / no-bid — always (PRODUCT_CONTRACT rule 5).
+10. Admin/owner view is a separate, later subject.
+
+Customization stance, restated plainly: every client runs the same system.
+Onboarding a pipeline client vs a construction client means loading their
+templates, products, capabilities and guidelines as data — never writing a
+separate code version per client.
