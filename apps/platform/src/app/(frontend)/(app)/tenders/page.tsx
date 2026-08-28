@@ -32,6 +32,14 @@ export default async function TendersPage() {
     <>
       <Topbar title="Tenders" subtitle={`${totalDocs} in this workspace`} />
       <div className="flex-1 overflow-y-auto p-6">
+        <div className="mb-4 flex justify-end">
+          <Link
+            href="/tenders/new"
+            className="rounded-[7px] bg-[var(--color-accent)] px-4 py-2 text-[13px] font-medium text-white hover:bg-[var(--color-accent-hover)]"
+          >
+            New tender
+          </Link>
+        </div>
         <Card>
           {docs.length === 0 ? (
             <EmptyState title="No tenders yet" body="Tenders you create will be listed here." />

@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation'
 import { Topbar } from '@/components/Topbar'
 import { Badge, Card, CardHeader, ComingSoon, EmptyState, Tone } from '@/components/ui'
 import { RequirementsPanel } from '@/components/RequirementsPanel'
+import { AddRequirementForm } from '@/components/AddRequirementForm'
+import { DocumentUpload } from '@/components/DocumentUpload'
+import { DecisionButtons } from '@/components/DecisionButtons'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 import {
   COMPLIANCE_LABELS,
@@ -161,10 +164,12 @@ export default async function TenderWorkspace({
                       <p className="mt-2 text-[13px]">{tender.decisionReason}</p>
                     </>
                   ) : (
-                    <p className="text-[13px] text-[var(--color-ink-soft)]">
-                      Not yet decided. The decision is always made by a person and recorded with a
-                      reason.
-                    </p>
+                    <>
+                      <p className="mb-3 text-[13px] text-[var(--color-ink-soft)]">
+                        Not yet decided — always a person's call, recorded with a reason.
+                      </p>
+                      <DecisionButtons tenderId={tender.id} />
+                    </>
                   )}
                 </div>
               </Card>
@@ -187,7 +192,15 @@ export default async function TenderWorkspace({
           </div>
         )}
 
-        {tab === 'requirements' && <RequirementsPanel requirements={requirements.docs as never} />}
+        {tab === 'requirements' && (
+          <div className="space-y-4">
+            <AddRequirementForm
+              tenderId={tender.id}
+              documents={documents.docs.map((d) => ({ id: d.id, filename: d.filename ?? 'document' }))}
+            />
+            <RequirementsPanel requirements={requirements.docs as never} />
+          </div>
+        )}
 
         {tab === 'compliance' && (
           <Card>
@@ -257,6 +270,9 @@ export default async function TenderWorkspace({
                 ))}
               </ul>
             )}
+            <div className="border-t border-[var(--color-border)]">
+              <DocumentUpload tenderId={tender.id} />
+            </div>
           </Card>
         )}
 
