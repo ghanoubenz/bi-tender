@@ -23,8 +23,8 @@ export default async function NewTenderPage() {
   return (
     <>
       <Topbar title="New tender" subtitle="Later, tenders will also arrive here automatically by email" />
-      <div className="flex-1 overflow-y-auto p-6">
-        <Card className="max-w-[640px] p-5">
+      <div className="flex-1 overflow-y-auto p-5">
+        <Card className="max-w-[660px] p-5">
           <form action={createTender} className="space-y-4">
             <div>
               <label className={label}>Tender title *</label>

@@ -1,6 +1,6 @@
 import type { Where } from 'payload'
 import { Topbar } from '@/components/Topbar'
-import { Badge, Card, EmptyState, type Tone } from '@/components/ui'
+import { Card, Cell, DataTable, EmptyState, PageHeading, Row, StatusDot, type Tone } from '@/components/ui'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 
 const KIND: Record<string, { label: string; tone: Tone }> = {
@@ -29,36 +29,37 @@ export default async function CompaniesPage() {
 
   return (
     <>
-      <Topbar title="Companies" subtitle={`${companies.totalDocs} companies`} />
-      <div className="flex-1 overflow-y-auto p-6">
+      <Topbar title="Companies" subtitle="Clients, prospects, partners and competitors" />
+      <div className="flex-1 overflow-y-auto p-5">
+        <PageHeading title="Companies" count={`${companies.totalDocs} in this workspace`} />
         <Card>
           {companies.docs.length === 0 ? (
-            <EmptyState title="No companies yet" body="Clients, prospects and competitors appear here." />
+            <EmptyState
+              title="No companies yet"
+              body="The organisations you bid to — and compete against — live here."
+            />
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--color-border)] text-left">
-                  {['Company', 'Type', 'Country', 'Industry', 'Tenders'].map((h, i) => (
-                    <th key={h} className={`px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[var(--color-ink-faint)] ${i === 4 ? 'text-right' : ''}`}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {companies.docs.map((c) => (
-                  <tr key={c.id} className="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-raised)]">
-                    <td className="px-4 py-2.5 text-[13px] font-medium">{c.name}</td>
-                    <td className="px-4 py-2.5">
-                      <Badge tone={KIND[c.kind as string]?.tone ?? 'neutral'}>{KIND[c.kind as string]?.label ?? c.kind}</Badge>
-                    </td>
-                    <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{c.country || '—'}</td>
-                    <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{c.industry || '—'}</td>
-                    <td className="tnum px-4 py-2.5 text-right text-[13px]">{tenderCount.get(c.id) ?? 0}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable
+              columns={[
+                { label: 'Company' },
+                { label: 'Relationship' },
+                { label: 'Country' },
+                { label: 'Tenders', align: 'right' },
+              ]}
+            >
+              {companies.docs.map((c) => (
+                <Row key={c.id}>
+                  <Cell strong sub={c.industry || undefined}>{c.name}</Cell>
+                  <Cell>
+                    <StatusDot tone={KIND[c.kind as string]?.tone ?? 'neutral'}>
+                      {KIND[c.kind as string]?.label ?? c.kind}
+                    </StatusDot>
+                  </Cell>
+                  <Cell>{c.country || '—'}</Cell>
+                  <Cell align="right"><span className="tnum">{tenderCount.get(c.id) ?? 0}</span></Cell>
+                </Row>
+              ))}
+            </DataTable>
           )}
         </Card>
       </div>

@@ -48,7 +48,7 @@ export default function LoginPage() {
 
         <form
           onSubmit={submit}
-          className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+          className="rounded-[16px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-window)]"
         >
           <label className="mb-1 block text-[12px] font-medium">Email</label>
           <input className={field} value={email} onChange={(e) => setEmail(e.target.value)} />

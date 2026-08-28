@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import type { Where } from 'payload'
 import { Topbar } from '@/components/Topbar'
-import { Badge, Card, EmptyState, StatusDot } from '@/components/ui'
+import { Badge, Card, Cell, DataTable, EmptyState, PageHeading, Row, StatusDot, type Tone } from '@/components/ui'
+import { IconPlus } from '@/components/icons'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 import { STAGE_LABELS, formatDeadline, formatMoney } from '@/lib/format'
+import { readinessOf } from '@/lib/readiness'
 
-const STAGE_TONE: Record<string, 'neutral' | 'accent' | 'positive' | 'caution' | 'critical'> = {
+const STAGE_TONE: Record<string, Tone> = {
   identified: 'neutral',
   qualifying: 'accent',
   preparing: 'accent',
@@ -19,85 +21,93 @@ export default async function TendersPage() {
   const user = await getCurrentUser()
   const tenant = tenantIdOf(user)
   const payload = await getClient()
+  const scope: Where = tenant ? { tenant: { equals: tenant } } : {}
 
-  const { docs, totalDocs } = await payload.find({
-    collection: 'tenders',
-    where: (tenant ? { tenant: { equals: tenant } } : {}) as Where,
-    sort: 'submissionDeadline',
-    limit: 100,
-    depth: 1,
-  })
+  const [tenders, requirements] = await Promise.all([
+    payload.find({ collection: 'tenders', where: scope, sort: 'submissionDeadline', limit: 100, depth: 1 }),
+    payload.find({ collection: 'requirements', where: scope, limit: 500, depth: 0 }),
+  ])
+
+  const byTender = new Map<number, typeof requirements.docs>()
+  for (const r of requirements.docs) {
+    const id = typeof r.tender === 'object' ? r.tender?.id : (r.tender as number)
+    if (id) byTender.set(id, [...(byTender.get(id) ?? []), r])
+  }
 
   return (
     <>
-      <Topbar title="Tenders" subtitle={`${totalDocs} in this workspace`} />
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mb-4 flex justify-end">
-          <Link
-            href="/tenders/new"
-            className="rounded-[7px] bg-[var(--color-accent)] px-4 py-2 text-[13px] font-medium text-white hover:bg-[var(--color-accent-hover)]"
-          >
-            New tender
-          </Link>
-        </div>
+      <Topbar title="Tenders" subtitle="Every opportunity in this workspace" />
+      <div className="flex-1 overflow-y-auto p-5">
+        <PageHeading
+          title="Tenders"
+          count={`${tenders.totalDocs} total`}
+          action={
+            <Link
+              href="/tenders/new"
+              className="transition-ui flex items-center gap-1.5 rounded-[8px] bg-[var(--color-accent)] px-3.5 py-2 text-[12.5px] font-medium text-white hover:bg-[var(--color-accent-hover)]"
+            >
+              <IconPlus size={14} /> New tender
+            </Link>
+          }
+        />
         <Card>
-          {docs.length === 0 ? (
-            <EmptyState title="No tenders yet" body="Tenders you create will be listed here." />
+          {tenders.docs.length === 0 ? (
+            <EmptyState title="No tenders yet" body="Create the first one — later they will also arrive here by email." />
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--color-border)] text-left">
-                  {['Tender', 'Client', 'Stage', 'Value', 'Deadline'].map((h, i) => (
-                    <th
-                      key={h}
-                      className={`px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[var(--color-ink-faint)] ${
-                        i >= 3 ? 'text-right' : ''
-                      }`}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {docs.map((t) => {
-                  const d = formatDeadline(t.submissionDeadline)
-                  const client = typeof t.client === 'object' ? t.client?.name : null
-                  return (
-                    <tr
-                      key={t.id}
-                      className="border-b border-[var(--color-border)] transition-colors last:border-0 hover:bg-[var(--color-raised)]"
-                    >
-                      <td className="px-4 py-2.5">
-                        <Link
-                          href={`/tenders/${t.id}`}
-                          className="text-[13px] font-medium hover:text-[var(--color-accent)]"
-                        >
-                          {t.title}
-                        </Link>
-                        <div className="text-[12px] text-[var(--color-ink-faint)]">
-                          {t.reference || 'No reference'}
-                        </div>
-                      </td>
-                      <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">
-                        {client ?? '—'}
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <StatusDot tone={STAGE_TONE[t.stage as string] ?? 'neutral'}>
-                          {STAGE_LABELS[t.stage as string] ?? t.stage}
-                        </StatusDot>
-                      </td>
-                      <td className="tnum px-4 py-2.5 text-right text-[13px] text-[var(--color-ink-soft)]">
-                        {formatMoney(t.estimatedValue)}
-                      </td>
-                      <td className="px-4 py-2.5 text-right">
-                        <Badge tone={d.tone}>{d.text}</Badge>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <DataTable
+              columns={[
+                { label: 'Tender' },
+                { label: 'Client' },
+                { label: 'Stage' },
+                { label: 'Readiness' },
+                { label: 'Value', align: 'right' },
+                { label: 'Deadline', align: 'right' },
+              ]}
+            >
+              {tenders.docs.map((t) => {
+                const d = formatDeadline(t.submissionDeadline)
+                const client = typeof t.client === 'object' ? t.client?.name : null
+                const ready = readinessOf(byTender.get(t.id) ?? [])
+                return (
+                  <Row key={t.id}>
+                    <Cell strong sub={t.reference || undefined}>
+                      <Link href={`/tenders/${t.id}`} className="transition-ui hover:text-[var(--color-accent)]">
+                        {t.title}
+                      </Link>
+                    </Cell>
+                    <Cell>{client ?? '—'}</Cell>
+                    <Cell>
+                      <StatusDot tone={STAGE_TONE[t.stage as string] ?? 'neutral'}>
+                        {STAGE_LABELS[t.stage as string] ?? t.stage}
+                      </StatusDot>
+                    </Cell>
+                    <Cell>
+                      {ready.score === null ? (
+                        <span className="text-[12.5px] text-[var(--color-ink-faint)]">Not checked</span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <span className="h-1.5 w-16 overflow-hidden rounded-full bg-[var(--color-canvas)]">
+                            <span
+                              className="block h-full rounded-full"
+                              style={{
+                                width: `${ready.score}%`,
+                                background:
+                                  ready.tone === 'positive' ? 'var(--color-positive)'
+                                  : ready.tone === 'critical' ? 'var(--color-critical)'
+                                  : 'var(--color-caution)',
+                              }}
+                            />
+                          </span>
+                          <span className="tnum text-[12.5px]">{ready.score}%</span>
+                        </span>
+                      )}
+                    </Cell>
+                    <Cell align="right"><span className="tnum">{formatMoney(t.estimatedValue)}</span></Cell>
+                    <Cell align="right"><Badge tone={d.tone}>{d.text}</Badge></Cell>
+                  </Row>
+                )
+              })}
+            </DataTable>
           )}
         </Card>
       </div>

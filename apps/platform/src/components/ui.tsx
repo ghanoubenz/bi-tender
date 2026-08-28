@@ -171,3 +171,92 @@ export function StatusDot({ tone, children }: { tone: Tone; children: ReactNode 
     </span>
   )
 }
+
+/**
+ * Table primitives. Every list screen uses these, so column rhythm, hover and
+ * empty states stay identical across the product by construction rather than
+ * by remembering to copy the markup.
+ */
+export function DataTable({
+  columns,
+  children,
+}: {
+  columns: { label: string; align?: 'right' }[]
+  children: ReactNode
+}) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-[var(--color-border)]">
+            {columns.map((c) => (
+              <th
+                key={c.label}
+                className={`px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-[var(--color-ink-faint)] ${
+                  c.align === 'right' ? 'text-right' : 'text-left'
+                }`}
+              >
+                {c.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>{children}</tbody>
+      </table>
+    </div>
+  )
+}
+
+export function Row({ children, muted }: { children: ReactNode; muted?: boolean }) {
+  return (
+    <tr
+      className={`transition-ui border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-raised)] ${
+        muted ? 'opacity-55' : ''
+      }`}
+    >
+      {children}
+    </tr>
+  )
+}
+
+export function Cell({
+  children,
+  strong,
+  align,
+  sub,
+}: {
+  children: ReactNode
+  strong?: boolean
+  align?: 'right'
+  sub?: ReactNode
+}) {
+  return (
+    <td className={`px-4 py-3 ${align === 'right' ? 'text-right' : ''}`}>
+      <div className={`text-[13px] ${strong ? 'font-medium' : 'text-[var(--color-ink-soft)]'}`}>
+        {children}
+      </div>
+      {sub && <div className="mt-0.5 text-[12px] text-[var(--color-ink-faint)]">{sub}</div>}
+    </td>
+  )
+}
+
+/** A page-level header inside the content area, above a table. */
+export function PageHeading({
+  title,
+  count,
+  action,
+}: {
+  title: string
+  count?: string
+  action?: ReactNode
+}) {
+  return (
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 className="text-[19px] font-semibold tracking-[-0.015em]">{title}</h2>
+        {count && <p className="mt-0.5 text-[12.5px] text-[var(--color-ink-faint)]">{count}</p>}
+      </div>
+      {action}
+    </div>
+  )
+}

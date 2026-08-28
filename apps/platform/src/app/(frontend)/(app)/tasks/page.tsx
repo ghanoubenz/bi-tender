@@ -1,15 +1,15 @@
 import type { Where } from 'payload'
 import { Topbar } from '@/components/Topbar'
-import { Badge, Card, EmptyState } from '@/components/ui'
+import { Badge, Card, Cell, DataTable, EmptyState, PageHeading, Row, StatusDot, type Tone } from '@/components/ui'
 import { NewTaskForm } from '@/components/NewTaskForm'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 import { formatDeadline } from '@/lib/format'
 
-const STATUS: Record<string, string> = {
-  todo: 'To do',
-  in_progress: 'In progress',
-  blocked: 'Blocked',
-  done: 'Done',
+const STATUS: Record<string, { label: string; tone: Tone }> = {
+  todo: { label: 'To do', tone: 'neutral' },
+  in_progress: { label: 'In progress', tone: 'accent' },
+  blocked: { label: 'Blocked', tone: 'critical' },
+  done: { label: 'Done', tone: 'positive' },
 }
 
 export default async function TasksPage() {
@@ -28,39 +28,48 @@ export default async function TasksPage() {
 
   return (
     <>
-      <Topbar title="Tasks" subtitle={`${open.length} open · ${done.length} done`} />
-      <div className="flex-1 overflow-y-auto p-6">
+      <Topbar title="Tasks" subtitle="Everything the bid team owes this week" />
+      <div className="flex-1 overflow-y-auto p-5">
+        <PageHeading title="Tasks" count={`${open.length} open · ${done.length} done`} />
+
         <Card className="mb-4">
           <NewTaskForm tenders={tenders.docs.map((t) => ({ id: t.id, title: t.title }))} />
         </Card>
+
         <Card>
           {tasks.docs.length === 0 ? (
-            <EmptyState title="No tasks yet" body="Work for the team lives here — add the first one above." />
+            <EmptyState title="No tasks yet" body="Add the first one above — it will show on the dashboard too." />
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--color-border)] text-left">
-                  {['Task', 'Tender', 'Status', 'Priority', 'Due'].map((h, i) => (
-                    <th key={h} className={`px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[var(--color-ink-faint)] ${i === 4 ? 'text-right' : ''}`}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[...open, ...done].map((t) => {
-                  const d = formatDeadline(t.dueDate)
-                  const tender = typeof t.tender === 'object' ? t.tender?.title : null
-                  return (
-                    <tr key={t.id} className={`border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-raised)] ${t.status === 'done' ? 'opacity-50' : ''}`}>
-                      <td className="px-4 py-2.5 text-[13px] font-medium">{t.title}</td>
-                      <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{tender ?? '—'}</td>
-                      <td className="px-4 py-2.5"><Badge tone={t.status === 'blocked' ? 'critical' : t.status === 'done' ? 'positive' : 'neutral'}>{STATUS[t.status as string] ?? t.status}</Badge></td>
-                      <td className="px-4 py-2.5"><Badge tone={t.priority === 'high' ? 'critical' : 'neutral'}>{t.priority}</Badge></td>
-                      <td className="px-4 py-2.5 text-right"><Badge tone={t.status === 'done' ? 'neutral' : d.tone}>{d.text}</Badge></td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <DataTable
+              columns={[
+                { label: 'Task' },
+                { label: 'Tender' },
+                { label: 'Status' },
+                { label: 'Priority' },
+                { label: 'Due', align: 'right' },
+              ]}
+            >
+              {[...open, ...done].map((t) => {
+                const d = formatDeadline(t.dueDate)
+                const tender = typeof t.tender === 'object' ? t.tender?.title : null
+                const s = STATUS[t.status as string] ?? { label: t.status, tone: 'neutral' as Tone }
+                return (
+                  <Row key={t.id} muted={t.status === 'done'}>
+                    <Cell strong>{t.title}</Cell>
+                    <Cell>{tender ?? '—'}</Cell>
+                    <Cell><StatusDot tone={s.tone}>{s.label}</StatusDot></Cell>
+                    <Cell>
+                      {t.priority === 'high'
+                        ? <Badge tone="critical">High</Badge>
+                        : <span className="text-[13px] capitalize">{t.priority}</span>}
+                    </Cell>
+                    <Cell align="right">
+                      <Badge tone={t.status === 'done' ? 'neutral' : d.tone}>{d.text}</Badge>
+                    </Cell>
+                  </Row>
+                )
+              })}
+            </DataTable>
           )}
         </Card>
       </div>

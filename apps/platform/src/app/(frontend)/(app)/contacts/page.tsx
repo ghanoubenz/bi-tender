@@ -1,6 +1,6 @@
 import type { Where } from 'payload'
 import { Topbar } from '@/components/Topbar'
-import { Badge, Card, EmptyState } from '@/components/ui'
+import { Badge, Card, Cell, DataTable, EmptyState, PageHeading, Row } from '@/components/ui'
 import { getClient, getCurrentUser, tenantIdOf } from '@/lib/payload'
 
 export default async function ContactsPage() {
@@ -18,38 +18,39 @@ export default async function ContactsPage() {
 
   return (
     <>
-      <Topbar title="Contacts" subtitle={`${contacts.totalDocs} people`} />
-      <div className="flex-1 overflow-y-auto p-6">
+      <Topbar title="Contacts" subtitle="The people behind each tender" />
+      <div className="flex-1 overflow-y-auto p-5">
+        <PageHeading title="Contacts" count={`${contacts.totalDocs} people`} />
         <Card>
           {contacts.docs.length === 0 ? (
-            <EmptyState title="No contacts yet" body="People at your clients and partners appear here." />
+            <EmptyState
+              title="No contacts yet"
+              body="Procurement leads and contract engineers you deal with appear here."
+            />
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--color-border)] text-left">
-                  {['Name', 'Company', 'Role', 'Email', 'Phone'].map((h) => (
-                    <th key={h} className="px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-[var(--color-ink-faint)]">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {contacts.docs.map((c) => {
-                  const company = typeof c.company === 'object' ? c.company?.name : null
-                  return (
-                    <tr key={c.id} className="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-raised)]">
-                      <td className="px-4 py-2.5 text-[13px] font-medium">
+            <DataTable
+              columns={[{ label: 'Name' }, { label: 'Company' }, { label: 'Email' }, { label: 'Phone' }]}
+            >
+              {contacts.docs.map((c) => {
+                const company = typeof c.company === 'object' ? c.company?.name : null
+                return (
+                  <Row key={c.id}>
+                    <Cell strong sub={c.jobTitle || undefined}>
+                      <span className="inline-flex items-center gap-2">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent-soft)] text-[10.5px] font-semibold text-[var(--color-accent-ink)]">
+                          {c.fullName.split(' ').slice(0, 2).map((n) => n[0]).join('')}
+                        </span>
                         {c.fullName}
                         {c.isPrimary && <Badge tone="accent">Primary</Badge>}
-                      </td>
-                      <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{company ?? '—'}</td>
-                      <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{c.jobTitle || '—'}</td>
-                      <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{c.email || '—'}</td>
-                      <td className="px-4 py-2.5 text-[13px] text-[var(--color-ink-soft)]">{c.phone || '—'}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                      </span>
+                    </Cell>
+                    <Cell>{company ?? '—'}</Cell>
+                    <Cell>{c.email || '—'}</Cell>
+                    <Cell>{c.phone || '—'}</Cell>
+                  </Row>
+                )
+              })}
+            </DataTable>
           )}
         </Card>
       </div>

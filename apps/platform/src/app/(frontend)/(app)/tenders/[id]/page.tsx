@@ -80,7 +80,7 @@ export default async function TenderWorkspace({
       />
 
       <div className="shrink-0 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6">
-        <div className="flex flex-wrap items-center gap-2 pb-3">
+        <div className="flex flex-wrap items-center gap-2 pb-3 pt-3">
           <Badge tone="accent">{STAGE_LABELS[tender.stage as string] ?? tender.stage}</Badge>
           <Badge tone={deadline.tone}>{deadline.text}</Badge>
           <span className="text-[12px] text-[var(--color-ink-faint)]">
@@ -95,22 +95,23 @@ export default async function TenderWorkspace({
           {gaps > 0 && <Badge tone="critical">{gaps} compliance gap{gaps > 1 ? 's' : ''}</Badge>}
         </div>
 
-        <nav className="-mb-px flex gap-1 overflow-x-auto">
+        <nav className="flex gap-1 overflow-x-auto pb-2.5">
           {TABS.map((t) => {
             const active = tab === t.key
             return (
               <Link
                 key={t.key}
                 href={`/tenders/${id}?tab=${t.key}`}
-                className={`whitespace-nowrap border-b-2 px-3 py-2 text-[13px] transition-colors ${
+                aria-current={active ? 'page' : undefined}
+                className={`transition-ui whitespace-nowrap rounded-[8px] px-3 py-1.5 text-[12.5px] ${
                   active
-                    ? 'border-[var(--color-accent)] font-medium text-[var(--color-accent)]'
-                    : 'border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]'
+                    ? 'bg-[var(--color-ink)] font-medium text-white'
+                    : 'text-[var(--color-ink-soft)] hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)]'
                 }`}
               >
                 {t.label}
                 {t.phase && (
-                  <span className="ml-1.5 text-[10px] uppercase text-[var(--color-ink-faint)]">
+                  <span className={`ml-1.5 text-[9.5px] font-semibold uppercase tracking-[0.05em] ${active ? 'text-white/60' : 'text-[var(--color-ink-faint)]'}`}>
                     soon
                   </span>
                 )}
@@ -120,7 +121,7 @@ export default async function TenderWorkspace({
         </nav>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-5">
         {tab === 'overview' && (
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
             <Card className="xl:col-span-2">
