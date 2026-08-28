@@ -50,6 +50,10 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: '— Tender Intelligence (internal)' },
+    components: {
+      // Make it unmistakable that /admin is the back office, not the product.
+      beforeNavLinks: ['@/components/admin/BackToProduct#BackToProduct'],
+    },
   },
   collections: [
     Tenants,
