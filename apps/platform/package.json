@@ -1,7 +1,7 @@
 {
   "name": "tender-platform",
   "version": "0.1.0",
-  "description": "Tender Intelligence platform — Payload 3 + Next.js (Phase A)",
+  "description": "Tender Intelligence platform \u2014 Payload 3 + Next.js (Phase A)",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,8 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" tsx src/seed/run.ts",
-    "lint": "next lint"
+    "lint": "next lint",
+    "doctor": "node scripts/doctor.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
