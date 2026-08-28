@@ -7,6 +7,7 @@ import {
   IconBadge, IconBuilding, IconChart, IconCheckList, IconDoc, IconGrid,
   IconInbox, IconSparkle, IconTemplate, IconUsers,
 } from './icons'
+import { BUILD } from '@/lib/version'
 
 type Icon = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>
 type NavItem = { href: string; label: string; icon: Icon; soon?: boolean }
@@ -112,6 +113,7 @@ export function Sidebar({ tenantName, userName }: { tenantName: string; userName
         </div>
         <div className="min-w-0 flex-1">
           <div className="truncate text-[12.5px] font-medium leading-tight">{userName}</div>
+          <div className="truncate text-[10.5px] leading-tight text-[var(--color-ink-faint)]">{BUILD}</div>
         </div>
       </div>
     </aside>
