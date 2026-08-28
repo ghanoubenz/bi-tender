@@ -7,6 +7,22 @@ an assistant with no prior context can read this and be productive.
 Repo: `https://github.com/ghanoubenz/bi-tender`
 Working branch: `claude/tender-platform-architecture-rhcmrw`
 
+## READ THESE FIRST, IN THIS ORDER
+
+Claude has no memory between sessions. Everything decided so far is in files —
+read them before doing anything, or you will repeat work already paid for.
+
+| File | What it holds |
+|---|---|
+| **CONTEXT.md** | **Start here.** How the founder works, what the product is, decisions already made and not to be re-litigated, mistakes already made, current state |
+| **PLAN.md** | Architecture and the full end-user journey (§18) |
+| **ROADMAP.md** | The six milestones and the September 15 deadline countdown |
+| **PRODUCT_CONTRACT.md** | The AI rules that are binding, not advisory |
+| **DESIGN.md** | The design system — tokens, contrast floor, chart rules, honesty rules |
+| **DECISIONS.md** | ADRs: every significant technical decision with its reasoning |
+| **QUESTIONS.md** | The founder's answers to 30 discovery questions — market, users, AI limits, integrations |
+| **SKILLS.md** | Design skills used, and how to install them |
+
 ---
 
 ## 1. RUN THE SERVER FIRST
