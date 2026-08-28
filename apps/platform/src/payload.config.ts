@@ -23,7 +23,16 @@ import { AiJobs } from './collections/AiJobs'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const databaseURI = process.env.DATABASE_URI || 'file:./tender-platform.db'
+/**
+ * Connection string resolution, in priority order. Vercel Postgres and Neon
+ * inject POSTGRES_URL / DATABASE_URL automatically when you attach a database
+ * from the dashboard, so a deployment needs no manual database configuration.
+ */
+const databaseURI =
+  process.env.DATABASE_URI ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  'file:./tender-platform.db'
 
 /**
  * One database adapter, chosen by the connection string.
